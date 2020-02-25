@@ -123,12 +123,12 @@ if __name__ == "__main__":
     # create argumentParser
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--version", help="zdock_script version", action="store_true")
-    parser.add_argument("--mode", type=int, help="script mode", default=0)
-    parser.add_argument("--input", help="pdb input file(path)")
-    parser.add_argument("--output", help="pdb output file(path)")
-    parser.add_argument("--ligand", help="pdb ligand file(path)")
-    parser.add_argument("--multiProcessMode", type=int,
+        "-version", help="zdock_script version", action="store_true")
+    parser.add_argument("-mode", type=int, help="script mode", default=0)
+    parser.add_argument("-input", help="pdb input file(path)")
+    parser.add_argument("-output", help="pdb output file(path)")
+    parser.add_argument("-ligand", help="pdb ligand file(path)")
+    parser.add_argument("-multiProcessMode", type=int,
                         help="multi process mode", default=0)
 
     args = parser.parse_args()

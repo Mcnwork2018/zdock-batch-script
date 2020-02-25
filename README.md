@@ -18,20 +18,25 @@
 
 ### 参数选项：
 
---help 帮助信息
---version 脚本版本
---mode 0 默认值，对 pdb 执行 mark_sur, zdock, create.pl 三步。
-                1 只对 pdb 执行 mark_sur 这一步。
-                2 只对 pdb 执行 zdock 这一步，但需要指定输入文件是 mark_sur 处理后的文件
-                3 只对 pdb 执行 create.pl 这一步，但需要指定输入文件是 zdock 处理后的文件。
---input filepath file 是可以是单个 pdb 文件的路径，若只有文件名默认为当前目录，也可以是 pdb 的文件夹（多个 pdb 批处理）。
+-help 帮助信息
 
---output path 输出文件指定路径，在不指定输出路径的情况下默认当前路径。
+-version 脚本版本
 
---multiProcessMode 0 默认值 ，不开启多进程。
-										   n n 为开启几个多进程。
+-mode 0 默认值，对 pdb 执行 mark_sur, zdock, create.pl 三步。                
 
---ligand filepath 指定配体，可以是单个文件的路径，也可以是多个文件的文件夹路径，有几个 ligand 输出多个结果。
+​				1 只对 pdb 执行 mark_sur 这一步。
+
+​				2 只对 pdb 执行 zdock 这一步，但需要指定输入文件是 mark_sur 处理后的文件
+
+​				3 只对 pdb 执行 create.pl 这一步，但需要指定输入文件是 zdock 处理后的文件。
+
+-input filepath file 是可以是单个 pdb 文件的路径，若只有文件名默认为当前目录，也可以是 pdb 的文件夹（多个 pdb 批处理）。
+
+-output path 输出文件指定路径，在不指定输出路径的情况下默认当前路径。
+
+-multiProcessMode n 开启n个进程的多线程池，n=0为默认值不开启多线程
+
+-ligand filepath 指定配体，可以是单个文件的路径，也可以是多个文件的文件夹路径，有几个 ligand 输出多个结果。
 
 ### 项目结构：
 
@@ -39,9 +44,7 @@
 
  --command/ zdock 软件原来的程序
 
- --ligand/ 配体文件放置文件夹
-
- --zdock++.py 批处理脚本
+ --zdock.py 批处理脚本
 
  --README.md 脚本说明
 
@@ -80,7 +83,7 @@
 #### 1.我有一个 pdb 和一个配体，想直接三步全执行生成最后结果。【已测试】
 
 ```python
-python3 zdock++.py  --input  ./example/H25N7.29.pdb  --ligand  ./ligand/Ag74_m.pdb  --output ./result
+python3 zdock.py  -input  ./example/H25N7.29.pdb  -ligand  ./ligand/Ag74_m.pdb  -output ./result
 ```
 
 #### 2.我有多个 pdb，但只有一个配体的情况下，想直接三步全执行生成最后结果。
@@ -88,27 +91,27 @@ python3 zdock++.py  --input  ./example/H25N7.29.pdb  --ligand  ./ligand/Ag74_m.p
 开多进程模式【已测试】
 
 ```python
-python3 zdock++.py  --input  ./example  --ligand  ./ligand/Ag74_m.pdb  --output ./result   --multiProcessMode 5
+python3 zdock.py  -input  ./example  -ligand  ./ligand/Ag74_m.pdb  -output ./result   -multiProcessMode 5
 ```
 
 不开多进程模式【已测试】
 
-```
-python3 zdock++.py  --input  ./example  --ligand  ./ligand/Ag74_m.pdb  --output ./result
+```python
+python3 zdock.py  -input  ./example  -ligand  ./ligand/Ag74_m.pdb  -output ./result
 ```
 
 #### 3.我有一个 pdb，有多个配体，直接三步全执行生成最后结果。
 
-开多进程模式【有问题】
+开多进程模式【已测试】
 
 ```python
-python3 zdock++.py  --input  ./example/H25N7.29.pdb  --ligand  ./ligand  --output ./result  --multiProcessMode 5
+python3 zdock.py  -input  ./example/H25N7.29.pdb  -ligand  ./ligand  -output ./result  -multiProcessMode 5
 ```
 
 不开多进程模式【已测试】
 
-```
-python3 zdock++.py  --input  ./example/H25N7.29.pdb  --ligand  ./ligand  --output ./result
+```python
+python3 zdock.py  -input  ./example/H25N7.29.pdb  -ligand  ./ligand  -output ./result
 ```
 
 #### 4.我有一个或一堆 pdb,只想执行 mark_sur
@@ -116,19 +119,19 @@ python3 zdock++.py  --input  ./example/H25N7.29.pdb  --ligand  ./ligand  --outpu
 一个 pdb【已测试】
 
 ```python
-python3 zdock++.py --mode 1  --input ./example/H25N7.29.pdb --output ./mark_sur
+python3 zdock.py -mode 1  -input ./example/H25N7.29.pdb -output ./mark_sur
 ```
 
 多个 pdb【已测试】
 
 ```python
-python3 zdock++.py --mode 1  --input ./example/ --output ./mark_sur
+python3 zdock.py -mode 1  -input ./example/ -output ./mark_sur
 ```
 
 多个 pdb，多进程模式【已测试】
 
 ```python
-python3 zdock++.py --mode 1  --input ./example/ --output ./mark_sur --multiProcessMode 5
+python3 zdock.py -mode 1  -input ./example/ -output ./mark_sur -multiProcessMode 5
 ```
 
 #### 5.我有一个或一堆 pdb_m, 只想执行 zdock
@@ -136,43 +139,43 @@ python3 zdock++.py --mode 1  --input ./example/ --output ./mark_sur --multiProce
 一个 pdb_m，一个配体【已测试】
 
 ```python
-python3 zdock++.py --mode 2  --input ./mark_sur/H25N7.29_m.pdb --output ./zdock_pdb --ligand ./ligand/Ag74_m.pdb
+python3 zdock.py -mode 2  -input ./mark_sur/H25N7.29_m.pdb -output ./zdock_pdb -ligand ./ligand/Ag74_m.pdb
 ```
 
 一个 pdb_m，多个配体【已测试】
 
 ```python
-python3 zdock++.py --mode 2  --input ./mark_sur/H25N7.29_m.pdb --output ./zdock_pdb --ligand ./ligand
+python3 zdock.py -mode 2  -input ./mark_sur/H25N7.29_m.pdb -output ./zdock_pdb -ligand ./ligand
 ```
 
 一个 pdb_m，多个配体，多进程模式【已测试】
 
 ```python
-python3 zdock++.py --mode 2  --input ./mark_sur/H25N7.29_m.pdb --output ./zdock_pdb --ligand ./ligand --multiProcessMode 5
+python3 zdock.py -mode 2  -input ./mark_sur/H25N7.29_m.pdb -output ./zdock_pdb -ligand ./ligand -multiProcessMode 5
 ```
 
 多个 pdb_m，一个配体【已测试】
 
 ```python
-python3 zdock++.py --mode 2  --input ./mark_sur --output ./zdock_pdb --ligand ./ligand/Ag74_m.pdb
+python3 zdock.py -mode 2  -input ./mark_sur -output ./zdock_pdb -ligand ./ligand/Ag74_m.pdb
 ```
 
 多个 pdb_m，一个配体，多进程模式【已测试】
 
 ```python
-python3 zdock++.py --mode 2  --input ./mark_sur --output ./zdock_pdb --ligand ./ligand/Ag74_m.pdb --multiProcessMode 5
+python3 zdock.py -mode 2  -input ./mark_sur -output ./zdock_pdb -ligand ./ligand/Ag74_m.pdb -multiProcessMode 5
 ```
 
 多个 pdb_m，多个配体 【已测试】
 
 ```python
-python3 zdock++.py --mode 2  --input ./mark_sur --output ./zdock_pdb --ligand ./ligand
+python3 zdock.py -mode 2  -input ./mark_sur -output ./zdock_pdb -ligand ./ligand
 ```
 
 多个 pdb_m，多个配体 ,多进程模式【已测试】
 
 ```python
-python3 zdock++.py --mode 2  --input ./mark_sur --output ./zdock_pdb --ligand ./ligand --multiProcessMode 5
+python3 zdock.py -mode 2  -input ./mark_sur -output ./zdock_pdb -ligand ./ligand -multiProcessMode 5
 ```
 
 #### 6.我有一个或一堆 pdb_m.out, 只想执行 create_pl
@@ -180,17 +183,17 @@ python3 zdock++.py --mode 2  --input ./mark_sur --output ./zdock_pdb --ligand ./
 一个 pdb_m.out【已测试】
 
 ```python
-python3 zdock++.py --mode 3  --input ./zdock_pdb/H25N7.29/H25N7.29_m_Ag74.out --output ./create_pl_pdb
+python3 zdock.py -mode 3  -input ./zdock_pdb/H25N7.29/H25N7.29_m_Ag74.out -output ./create_pl_pdb
 ```
 
 多个 pdb_m.out【已测试】
 
 ```python
-python3 zdock++.py --mode 3  --input ./zdock_pdb/ --output ./create_pl_pdb
+python3 zdock.py -mode 3  -input ./zdock_pdb/ -output ./create_pl_pdb
 ```
 
 多个 pdb_m.out，多进程模式【已测试】
 
 ```python
-python3 zdock++.py --mode 3  --input ./zdock_pdb/ --output ./create_pl_pdb --multiProcessMode 5
+python3 zdock.py -mode 3  -input ./zdock_pdb/ -output ./create_pl_pdb -multiProcessMode 5
 ```
